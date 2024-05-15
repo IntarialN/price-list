@@ -29,7 +29,7 @@ import {User} from "@/types/user";
 export default class Home extends Vue {
   @State((state) => state.items.itemsPerPage) itemsPerPage!: number;
 
-  @Action load!: (items: any, pages: number) => void;
+  @Action load!: (data: { items: ModelItem[], pages: number }) => void;
   @Action login!: (username: string) => void;
 
   public isOpenedCreate: boolean = false;
@@ -51,7 +51,7 @@ export default class Home extends Vue {
 
   async loadItems() {
     const isLoaded: ItemFindResponse = await apiService('get', 'items', { page: 1, itemsPerPage: this.itemsPerPage })
-    this.load(isLoaded.items, isLoaded.pages);
+    this.load({ items: isLoaded.items, pages: isLoaded.pages });
   }
 
   async authUser() {

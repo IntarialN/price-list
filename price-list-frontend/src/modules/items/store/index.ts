@@ -5,13 +5,23 @@ import {ModelItem} from "@/modules/items/models";
 export default {
     state: {
         items: [{ id: 0, name: 'Tovar2', price: 100 }],
-        pages: 10,
-        itemsPerPage: 5
+        pages: 0,
+        itemsPerPage: 3,
+        activePage: 1
     },
     mutations: {
-        loadItems(state: ItemState, data: { items: ModelItem[], pages?: number }) {
-            state.items = data.items;
-            state.pages = data.pages ?? 0;
+        loadItems(state: ItemState, { items, pages }: { items: ModelItem[], pages?: number }) {
+            state.items = items;
+            state.pages = pages ?? 0;
+            state.activePage = pages ? state.activePage : 0;
+        },
+        updateItems(state: ItemState, { items, pages }: { items: ModelItem[], pages?: number }) {
+            state.items = items;
+            state.pages = pages ?? 0;
+            state.activePage = 0;
+        },
+        updateActivePage(state: ItemState, page: number) {
+            state.activePage = page
         },
         newItem(state: ItemState, item: ModelItem) {
             state.items = [...state.items, item];
@@ -26,8 +36,14 @@ export default {
         },
     },
     actions: {
-        load({ commit }: { commit: Commit }, items: ModelItem[], pages?: number) {
+        load({ commit }: { commit: Commit }, { items, pages }: { items: ModelItem[], pages?: number }) {
             commit('loadItems', { items, pages });
+        },
+        update({ commit }: { commit: Commit }, { items, pages }: { items: ModelItem[], pages?: number }) {
+            commit('updateItems', { items, pages });
+        },
+        updatePage({ commit }: { commit: Commit }, page: number) {
+            commit('updateActivePage', page);
         },
         create({ commit }: { commit: Commit }, item: ModelItem) {
             commit('newItem', item);

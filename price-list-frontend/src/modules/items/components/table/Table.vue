@@ -3,18 +3,22 @@ import { Options, Vue } from 'vue-class-component';
 import { mapState } from 'vuex';
 import TableHeaders from './components/Table.Headers.vue';
 import TableItems from './components/Table.Items.vue';
+import TablePagination from './components/Table.Pagination.vue';
 import {ModelItem} from "@/modules/items/models";
 
 @Options({
-  components: {TableHeaders, TableItems},
+  components: {TablePagination, TableHeaders, TableItems},
   computed: {
     ...mapState<ModelItem>({
       items: (state: { items: { items: ModelItem } }) => state.items.items,
+      pages: (state: { items: { pages: number } }) => state.items.pages,
+      itemsPerPage: (state: { items: { itemsPerPage: number } }) => state.items.itemsPerPage,
+      activePage: (state: { items: { activePage: number } }) => state.items.activePage,
     })
   }
 })
 
-export default class Header extends Vue {
+export default class Table extends Vue {
   public searchValue: string = '';
 
   public search() {
@@ -70,6 +74,10 @@ export default class Header extends Vue {
         </div>
       </div>
     </div>
+    <TablePagination
+        :pages="this.pages"
+        :items-per-page="this.itemsPerPage"
+    />
   </div>
 </template>
 
@@ -81,6 +89,7 @@ export default class Header extends Vue {
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  gap: 50px;
 
   &-container {
     width: 50%;
