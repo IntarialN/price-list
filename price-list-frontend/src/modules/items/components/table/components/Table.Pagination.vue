@@ -1,5 +1,4 @@
 <script lang="ts">
-/* eslint-disable */
 import { Options, Vue } from 'vue-class-component';
 import {Action, State} from "vuex-class";
 import {ItemFindResponse, ModelItem} from "@/modules/items/models";
@@ -18,8 +17,8 @@ export default class TablePagination extends Vue {
   @State((state) => state.items.itemsPerPage) itemsPerPage!: number;
   @State((state) => state.items.activePage) activePage!: number;
 
-  @Action update!: (data: { items: ModelItem[], pages: number }) => void;
-  @Action updatePage!: (page: number) => void;
+  @Action update!: (data: { items: ModelItem[], pages: number }) => void; // eslint-disable-line no-unused-vars
+  @Action updatePage!: (page: number) => void; // eslint-disable-line no-unused-vars
 
   async updateActivePage(page: number, sort: ItemSortType, searchValue: string) {
     const isLoaded: ItemFindResponse = await apiService('get', 'items', { page: page, itemsPerPage: this.itemsPerPage, sort: JSON.stringify(sort), searchValue: searchValue });

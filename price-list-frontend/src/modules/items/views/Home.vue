@@ -1,6 +1,4 @@
 <script lang="ts">
-/* eslint-disable */
-
 import { Options, Vue } from 'vue-class-component';
 import Header from "@/modules/items/components/Header.vue";
 import Table from "@/modules/items/components/table/Table.vue";
@@ -12,7 +10,7 @@ import Login from "@/modules/user/components/Login.vue";
 import Create from "@/modules/items/components/create/Create.vue";
 import UserLocalStorage from "@/modules/user/services/user.localStorage";
 import {User, UserState} from "@/types/user";
-import {ItemSortKeys, ItemSortType, ItemSortTypes} from "@/types/item";
+import {ItemSortKeys, ItemSortType} from "@/types/item";
 
 @Options({
   components: {Create, Login, Table, Header},
@@ -31,8 +29,8 @@ export default class Home extends Vue {
   @State((state) => state.items.itemsPerPage) itemsPerPage!: number;
   @State((state) => state.items.activePage) activePage!: number;
 
-  @Action load!: (data: { items: ModelItem[], pages: number }) => void;
-  @Action login!: (username: string) => void;
+  @Action load!: (data: { items: ModelItem[], pages: number }) => void; // eslint-disable-line no-unused-vars
+  @Action login!: (username: string) => void; // eslint-disable-line no-unused-vars
 
   public isOpenedCreate: boolean = false;
   public isEdit: number | null = null;

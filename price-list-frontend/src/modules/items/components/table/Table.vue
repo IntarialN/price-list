@@ -1,14 +1,13 @@
 <script lang="ts">
-/* eslint-disable */
 import { Options, Vue } from 'vue-class-component';
 import { mapState } from 'vuex';
 import TableHeaders from './components/Table.Headers.vue';
 import TableItems from './components/Table.Items.vue';
 import TablePagination from './components/Table.Pagination.vue';
-import {ItemFindResponse, ModelItem} from "@/modules/items/models";
+import {ModelItem} from "@/modules/items/models";
 import {Action, State,} from "vuex-class";
 import {apiService} from "@/services";
-import {ItemSortKeys, ItemSortType, ItemSortTypes} from "@/types/item";
+import {ItemSortType} from "@/types/item";
 
 @Options({
   props: {
@@ -28,8 +27,8 @@ import {ItemSortKeys, ItemSortType, ItemSortTypes} from "@/types/item";
 
 export default class Table extends Vue {
 
-  @Action load!: (data: { items: ModelItem[], pages: number }) => void;
-  @Action deleteItem!: (id: number) => void;
+  @Action load!: (data: { items: ModelItem[], pages: number }) => void; // eslint-disable-line no-unused-vars
+  @Action deleteItem!: (id: number) => void; // eslint-disable-line no-unused-vars
 
   @State((state) => state.items.itemsPerPage) itemsPerPage!: number;
   @State((state) => state.items.activePage) activePage!: number;
