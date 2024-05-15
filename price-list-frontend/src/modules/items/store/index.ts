@@ -4,7 +4,7 @@ import {ModelItem} from "@/modules/items/models";
 
 export default {
     state: {
-        items: [{ id: 0, name: 'Tovar2', price: 100 }],
+        items: [],
         pages: 0,
         itemsPerPage: 3,
         activePage: 1
@@ -59,6 +59,9 @@ export default {
         }
     },
     getters: {
-        items: (state: ItemState) => state.items
+        items: (state: ItemState) => state.items,
+        pages: (state: ItemState) => state.pages,
+        itemsPerPage: (state: ItemState) => state.itemsPerPage,
+        activePage: (state: ItemState) => state.activePage
     },
 };

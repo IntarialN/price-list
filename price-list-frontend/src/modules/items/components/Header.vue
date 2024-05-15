@@ -1,25 +1,19 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import { mapState } from 'vuex';
-import {UserState} from "@/types/user";
 import Login from "@/modules/user/components/Login.vue";
 import UserLocalStorage from "@/modules/user/services/user.localStorage";
-import {Action} from "vuex-class";
+import {Action, State} from "vuex-class";
 
 @Options({
-  components: {Login},
-  computed: {
-    ...mapState<UserState>({
-      username: (state: UserState) => state.user.username,
-      isAuthenticated: (state: UserState) => state.user.isAuthenticated
-    })
-  }
+  components: {Login}
 })
 
 export default class Header extends Vue {
-  public isOpenedLogin: boolean = false;
 
+  @State((state) => state.user.isAuthenticated) isAuthenticated!: number;
   @Action quit!: () => void;
+
+  public isOpenedLogin: boolean = false;
 
   public toggleLoginMenu(open: boolean) {
     this.isOpenedLogin = open;

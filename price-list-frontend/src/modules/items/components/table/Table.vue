@@ -1,6 +1,5 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import { mapState } from 'vuex';
 import TableHeaders from './components/Table.Headers.vue';
 import TableItems from './components/Table.Items.vue';
 import TablePagination from './components/Table.Pagination.vue';
@@ -14,24 +13,17 @@ import {ItemSortType} from "@/types/item";
     sort: {} as ItemSortType,
     searchValue: String
   },
-  components: {TablePagination, TableHeaders, TableItems},
-  computed: {
-    ...mapState<ModelItem>({
-      items: (state: { items: { items: ModelItem } }) => state.items.items,
-      pages: (state: { items: { pages: number } }) => state.items.pages,
-      itemsPerPage: (state: { items: { itemsPerPage: number } }) => state.items.itemsPerPage,
-      activePage: (state: { items: { activePage: number } }) => state.items.activePage,
-    })
-  }
+  components: {TablePagination, TableHeaders, TableItems}
 })
 
 export default class Table extends Vue {
+  @State((state) => state.items.items) items!: number;
+  @State((state) => state.items.pages) pages!: number;
+  @State((state) => state.items.itemsPerPage) itemsPerPage!: number;
+  @State((state) => state.items.activePage) activePage!: number;
 
   @Action load!: (data: { items: ModelItem[], pages: number }) => void; // eslint-disable-line no-unused-vars
   @Action deleteItem!: (id: number) => void; // eslint-disable-line no-unused-vars
-
-  @State((state) => state.items.itemsPerPage) itemsPerPage!: number;
-  @State((state) => state.items.activePage) activePage!: number;
 
   async remove(id: number) {
     const isRemoved: boolean | { message: string } = await apiService('delete', `items/${ id !== undefined ? id : '' }`)

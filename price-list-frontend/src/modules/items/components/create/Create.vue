@@ -1,7 +1,5 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import { mapState } from 'vuex';
-import {UserState} from "@/types/user";
 import {apiService} from "@/services";
 import {ItemErrorResponse, ModelItem} from "@/modules/items/models";
 
@@ -19,11 +17,6 @@ import {ItemErrorResponse, ModelItem} from "@/modules/items/models";
     isEdit: Number,
     id: Number,
     items: [] as ModelItem[]
-  },
-  computed: {
-    ...mapState<UserState>({
-      username: (state: UserState) => state.user.username
-    })
   },
   methods: {
     async toggle() {

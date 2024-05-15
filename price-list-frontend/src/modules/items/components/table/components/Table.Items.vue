@@ -1,18 +1,9 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import { mapState } from 'vuex';
-import {UserState} from "@/types/user";
 
 @Options({
   props: {
     items: [{ id: Number, name: String, price: Number }],
-  },
-  components: {},
-  computed: {
-    ...mapState<UserState>({
-      username: (state: UserState) => state.user.username,
-      isAuthenticated: (state: UserState) => state.user.isAuthenticated
-    })
   }
 })
 

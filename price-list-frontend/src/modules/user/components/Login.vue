@@ -1,7 +1,5 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import { mapState } from 'vuex';
-import {UserState} from "@/types/user";
 import {apiService} from "@/services";
 import UserLocalStorage from "@/modules/user/services/user.localStorage";
 
@@ -9,11 +7,6 @@ import UserLocalStorage from "@/modules/user/services/user.localStorage";
   props: {
     isOpened: Boolean,
     close: () => Boolean
-  },
-  computed: {
-    ...mapState<UserState>({
-      username: (state: UserState) => state.user.username
-    })
   },
   methods: {
     async login() {
