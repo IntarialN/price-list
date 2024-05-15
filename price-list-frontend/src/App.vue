@@ -14,11 +14,15 @@ import PriceList from './components/PriceList.vue';
 export default class App extends Vue {}
 </script>
 
-<style>
+<style lang="scss">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  &::-webkit-scrollbar {
+    width: 0;
+  }
 }
 
 * {

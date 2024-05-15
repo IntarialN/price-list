@@ -1,10 +1,11 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import Header from "@/modules/items/components/Header.vue";
+import Table from "@/modules/items/components/table/Table.vue";
 
 
 @Options({
-  components: {Header}
+  components: {Table, Header}
 
 })
 export default class Home extends Vue {
@@ -15,6 +16,7 @@ export default class Home extends Vue {
 <template>
   <div class="pl-page-home">
     <Header />
+    <Table />
   </div>
 </template>
 
