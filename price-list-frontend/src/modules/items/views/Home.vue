@@ -11,9 +11,8 @@ import { State, Action } from 'vuex-class';
 import Login from "@/modules/user/components/Login.vue";
 import Create from "@/modules/items/components/create/Create.vue";
 import UserLocalStorage from "@/modules/user/services/user.localStorage";
-import {User} from "@/types/user";
+import {User, UserState} from "@/types/user";
 import {ItemSortKeys, ItemSortType, ItemSortTypes} from "@/types/item";
-
 
 @Options({
   components: {Create, Login, Table, Header},
@@ -22,12 +21,13 @@ import {ItemSortKeys, ItemSortType, ItemSortTypes} from "@/types/item";
       itemsPerPage: (state: { items: { itemsPerPage: number } }) => state.items.itemsPerPage,
     }),
     ...mapState<User>({
-      isAuthenticated: (state: User) => state.isAuthenticated,
+      isAuthenticated: (state: UserState) => state.user.isAuthenticated
     })
   },
 })
 
 export default class Home extends Vue {
+  @State((state) => state.items.items) items!: ModelItem[];
   @State((state) => state.items.itemsPerPage) itemsPerPage!: number;
 
   @Action load!: (data: { items: ModelItem[], pages: number }) => void;
@@ -106,6 +106,7 @@ export default class Home extends Vue {
   <div class="pl-page-home">
     <Header />
     <Table
+        v-if="this.isAuthenticated"
         :sort="sort"
         :searchValue="searchValue"
         @search="loadItems"
@@ -118,6 +119,7 @@ export default class Home extends Vue {
         :is-opened="isOpenedCreate"
         :is-edit="isEdit"
         :id="isEdit"
+        :items="this.items"
         @close="() => toggleCreateMenu(false)"
     />
   </div>

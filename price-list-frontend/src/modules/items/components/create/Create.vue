@@ -6,10 +6,19 @@ import {apiService} from "@/services";
 import {ItemErrorResponse, ModelItem} from "@/modules/items/models";
 
 @Options({
+  watch: {
+    '$props': {
+      handler() {
+        this.mount();
+      },
+      deep: true
+    }
+  },
   props: {
     isOpened: Boolean,
     isEdit: Number,
     id: Number,
+    items: [] as ModelItem[]
   },
   computed: {
     ...mapState<UserState>({
@@ -33,8 +42,17 @@ import {ItemErrorResponse, ModelItem} from "@/modules/items/models";
           this.$store.dispatch('create', { id: isSuccess.id, name: isSuccess.name, price: isSuccess.price })
         }
 
-        this.$emit('close');
+        this.close()
       }
+    },
+    async mount() {
+      if (!this.$props.isEdit) return;
+
+      const item: ModelItem | undefined = this.$props.items.find((item: ModelItem) => item.id === this.$props.id)
+      if (!item) return this.close();
+
+      this.name = item.name;
+      this.price = item.price;
     }
   }
 })
@@ -48,13 +66,20 @@ export default class Create extends Vue {
   changeForm(event: Event, key: 'name' | 'price') {
     this[key] = (event.target as HTMLInputElement).value;
   }
+
+  close() {
+    this.name = '';
+    this.price = '';
+
+    this.$emit('close')
+  }
 }
 
 </script>
 
 <template>
   <div :style="{ opacity: this.$props.isOpened ? 1 : 0, pointerEvents: this.$props.isOpened ? 'auto' : 'none' }" class="pl-page-home--modal-login">
-    <div class="pl-page-home--modal-login--filter" @click="$emit('close')" />
+    <div class="pl-page-home--modal-login--filter" @click="close" />
     <div class="pl-page-home--modal-login-box">
       <div class="pl-page-home--modal-login-box--input">
         <v-text-field
@@ -63,6 +88,8 @@ export default class Create extends Vue {
             v-for="key in loginKeys"
             variant="solo-filled"
             @change="(event: Event) => changeForm(event, key)"
+            v-model="this[key]"
+            :type="key === 'price' ? 'number' : 'text'"
         />
         <v-btn @click="this.toggle" color="primary">
           {{ this.$props.isEdit !== null ? 'Edit' : 'Create' }}
