@@ -29,6 +29,7 @@ import {ItemSortKeys, ItemSortType, ItemSortTypes} from "@/types/item";
 export default class Home extends Vue {
   @State((state) => state.items.items) items!: ModelItem[];
   @State((state) => state.items.itemsPerPage) itemsPerPage!: number;
+  @State((state) => state.items.activePage) activePage!: number;
 
   @Action load!: (data: { items: ModelItem[], pages: number }) => void;
   @Action login!: (username: string) => void;
@@ -83,7 +84,7 @@ export default class Home extends Vue {
 
   async loadItems() {
     const isLoaded: ItemFindResponse = await apiService('get', 'items', {
-      page: 1,
+      page: this.activePage,
       itemsPerPage: this.itemsPerPage,
       searchName: this.searchValue,
       sort: JSON.stringify(this.sort)
