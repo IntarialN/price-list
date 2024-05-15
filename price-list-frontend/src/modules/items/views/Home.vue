@@ -12,6 +12,7 @@ import Login from "@/modules/user/components/Login.vue";
 import Create from "@/modules/items/components/create/Create.vue";
 import UserLocalStorage from "@/modules/user/services/user.localStorage";
 import {User} from "@/types/user";
+import {ItemSortKeys, ItemSortType, ItemSortTypes} from "@/types/item";
 
 
 @Options({
@@ -34,14 +35,45 @@ export default class Home extends Vue {
 
   public isOpenedCreate: boolean = false;
   public isEdit: number | null = null;
+  public searchValue: string = '';
+  public sort: ItemSortType = {} as ItemSortType;
 
   public toggleCreateMenu(open: boolean) {
     this.isOpenedCreate = open;
+    if (!open) {
+      this.isEdit = null
+      this.isOpenedCreate = false
+    }
   }
 
   public editItem(id: number | null) {
     this.isEdit = id;
     this.toggleCreateMenu(true)
+  }
+
+  public createItem() {
+    this.isOpenedCreate = true;
+  }
+
+  public changeSearch(event: Event) {
+    this.searchValue = (event.target as HTMLInputElement).value;
+  }
+
+  public changeSort(key: ItemSortKeys) {
+    if (key === 'name' || key === 'price') {
+      const sortValue = this.sort[key];
+      if (sortValue) {
+        if (this.sort[key] === 'DESC') {
+          delete this.sort[key];
+        } else {
+          this.sort[key] = sortValue === 'ASC' ? 'DESC' : 'ASC'
+        }
+      } else {
+        this.sort[key] = 'ASC';
+      }
+    }
+
+    this.loadItems();
   }
 
   async mounted() {
@@ -50,8 +82,15 @@ export default class Home extends Vue {
   }
 
   async loadItems() {
-    const isLoaded: ItemFindResponse = await apiService('get', 'items', { page: 1, itemsPerPage: this.itemsPerPage })
-    this.load({ items: isLoaded.items, pages: isLoaded.pages });
+    const isLoaded: ItemFindResponse = await apiService('get', 'items', {
+      page: 1,
+      itemsPerPage: this.itemsPerPage,
+      searchName: this.searchValue,
+      sort: JSON.stringify(this.sort)
+    })
+    if (isLoaded.items) {
+      this.load({items: isLoaded.items, pages: isLoaded.pages});
+    }
   }
 
   async authUser() {
@@ -67,7 +106,13 @@ export default class Home extends Vue {
   <div class="pl-page-home">
     <Header />
     <Table
-      @edit="editItem"
+        :sort="sort"
+        :searchValue="searchValue"
+        @search="loadItems"
+        @changeSort="changeSort"
+        @changeSearch="changeSearch"
+        @edit="editItem"
+        @create="createItem"
     />
     <Create
         :is-opened="isOpenedCreate"

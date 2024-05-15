@@ -6,3 +6,10 @@ export interface ItemState {
     itemsPerPage: number;
     activePage: number;
 }
+
+export type ItemSortType = {
+    [key in ItemSortKeys]: ItemSortTypes
+}
+
+export type ItemSortKeys = 'price' | 'name'
+export type ItemSortTypes = 'ASC' | 'DESC'

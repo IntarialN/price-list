@@ -1,12 +1,20 @@
 <script lang="ts">
+/* eslint-disable */
 import { Options, Vue } from 'vue-class-component';
 import { mapState } from 'vuex';
 import TableHeaders from './components/Table.Headers.vue';
 import TableItems from './components/Table.Items.vue';
 import TablePagination from './components/Table.Pagination.vue';
-import {ModelItem} from "@/modules/items/models";
+import {ItemFindResponse, ModelItem} from "@/modules/items/models";
+import {Action, State,} from "vuex-class";
+import {apiService} from "@/services";
+import {ItemSortKeys, ItemSortType, ItemSortTypes} from "@/types/item";
 
 @Options({
+  props: {
+    sort: {} as ItemSortType,
+    searchValue: String
+  },
   components: {TablePagination, TableHeaders, TableItems},
   computed: {
     ...mapState<ModelItem>({
@@ -19,21 +27,27 @@ import {ModelItem} from "@/modules/items/models";
 })
 
 export default class Table extends Vue {
-  public searchValue: string = '';
 
-  public search() {
-  }
+  @Action load!: (data: { items: ModelItem[], pages: number }) => void;
+  @Action deleteItem!: (id: number) => void;
 
-  changeSearch(event: Event) {
-    this.searchValue = (event.target as HTMLInputElement).value;
-  }
+  @State((state) => state.items.itemsPerPage) itemsPerPage!: number;
+  @State((state) => state.items.activePage) activePage!: number;
 
-  remove(id: number) {
-    this.$emit('edit', id);
+  async remove(id: number) {
+    const isRemoved: boolean | { message: string } = await apiService('delete', `items/${ id !== undefined ? id : '' }`)
+
+    if (typeof isRemoved === 'boolean' && isRemoved) {
+      this.deleteItem(id);
+    }
   }
 
   edit(id: number) {
     this.$emit('edit', id);
+  }
+
+  createItem() {
+    this.$emit('create');
   }
 }
 </script>
@@ -45,11 +59,11 @@ export default class Table extends Vue {
         <v-text-field
             variant="solo-filled"
             label="Search"
-            @change="changeSearch"
+            @change="(event: Event) => this.$emit('changeSearch', event)"
         />
         <v-btn
             class="pl-page-home--table-container_search--btn"
-            @click="search()"
+            @click="this.$emit('search')"
             color="primary"
         >
           Search
@@ -58,6 +72,8 @@ export default class Table extends Vue {
       <div class="pl-page-home--table-container_list">
         <TableHeaders
             :items="this.items"
+            :sort="this.$props.sort"
+            @changeSort="(key: ItemSortKeys) => this.$emit('changeSort', key)"
         />
         <TableItems
           :items="this.items"
@@ -75,9 +91,17 @@ export default class Table extends Vue {
       </div>
     </div>
     <TablePagination
+        :show="this.items.length"
         :pages="this.pages"
         :items-per-page="this.itemsPerPage"
+        :sort="this.$props.sort"
+        :searchValue="this.$props.searchValue"
     />
+    <v-btn
+        @click="createItem"
+        color="primary">
+      Create New Item
+    </v-btn>
   </div>
 </template>
 

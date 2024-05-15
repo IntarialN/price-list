@@ -4,16 +4,16 @@ import { Options, Vue } from 'vue-class-component';
 import {Action, State} from "vuex-class";
 import {ItemFindResponse, ModelItem} from "@/modules/items/models";
 import {apiService} from "@/services";
+import {ItemSortType} from "@/types/item";
 
 @Options({
   props: {
+    show: Boolean,
     pages: Number,
-  },
-  components: {},
-  computed: {
+    sort: {} as ItemSortType,
+    searchValue: String
   }
 })
-
 export default class TablePagination extends Vue {
   @State((state) => state.items.itemsPerPage) itemsPerPage!: number;
   @State((state) => state.items.activePage) activePage!: number;
@@ -21,8 +21,8 @@ export default class TablePagination extends Vue {
   @Action update!: (data: { items: ModelItem[], pages: number }) => void;
   @Action updatePage!: (page: number) => void;
 
-  async updateActivePage(page: number) {
-    const isLoaded: ItemFindResponse = await apiService('get', 'items', { page: page, itemsPerPage: this.itemsPerPage });
+  async updateActivePage(page: number, sort: ItemSortType, searchValue: string) {
+    const isLoaded: ItemFindResponse = await apiService('get', 'items', { page: page, itemsPerPage: this.itemsPerPage, sort: JSON.stringify(sort), searchValue: searchValue });
 
     if (isLoaded.items.length) {
       this.update({items: isLoaded.items, pages: isLoaded.pages});
@@ -36,6 +36,7 @@ export default class TablePagination extends Vue {
 
 <template>
   <div
+      v-if="this.$props.show"
       class="pl-page-home--table-container_pagination">
     <div
       class="pl-page-home--table-container_pagination--content"
@@ -44,7 +45,7 @@ export default class TablePagination extends Vue {
           :key="index"
           v-for="index in this.pages"
           :class="{ 'active': this.activePage === index }"
-          @click="() => updateActivePage(index)"
+          @click="() => updateActivePage(index, this.$props.sort, this.$props.searchValue)"
       >
         {{ index }}
       </div>

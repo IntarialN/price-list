@@ -13,18 +13,21 @@ export default {
         loadItems(state: ItemState, { items, pages }: { items: ModelItem[], pages?: number }) {
             state.items = items;
             state.pages = pages ?? 0;
-            state.activePage = pages ? state.activePage : 0;
+            state.activePage = pages ? state.activePage : 1;
         },
         updateItems(state: ItemState, { items, pages }: { items: ModelItem[], pages?: number }) {
             state.items = items;
             state.pages = pages ?? 0;
-            state.activePage = 0;
+            state.activePage = 1;
         },
         updateActivePage(state: ItemState, page: number) {
             state.activePage = page
         },
         newItem(state: ItemState, item: ModelItem) {
             state.items = [...state.items, item];
+        },
+        deleteItem(state: ItemState, id: number) {
+            state.items = [...state.items.filter(item => item.id !== id)];
         },
         editItem(state: ItemState, item: ModelItem) {
             state.items = state.items
@@ -44,6 +47,9 @@ export default {
         },
         updatePage({ commit }: { commit: Commit }, page: number) {
             commit('updateActivePage', page);
+        },
+        deleteItem({ commit }: { commit: Commit }, id: number) {
+            commit('deleteItem', id);
         },
         create({ commit }: { commit: Commit }, item: ModelItem) {
             commit('newItem', item);

@@ -2,10 +2,12 @@
 import { Options, Vue } from 'vue-class-component';
 import { mapState } from 'vuex';
 import {UserState} from "@/types/user";
+import {ItemSortType} from "@/types/item";
 
 @Options({
   props: {
     items: [{ id: Number, name: String, price: Number }],
+    sort: {} as ItemSortType
   },
   components: {},
   computed: {
@@ -17,6 +19,10 @@ import {UserState} from "@/types/user";
 })
 
 export default class TableHeaders extends Vue {
+
+  public sorting(key: string) {
+    this.$emit('changeSort', key)
+  }
 }
 </script>
 
@@ -25,9 +31,11 @@ export default class TableHeaders extends Vue {
       v-if="this.$props.items.length"
       class="pl-page-home--table-container_list-headers">
     <p
+        @click="() => sorting(key)"
         :key="key"
         v-for="key in Object.keys(this.$props.items[0])">
       <b>{{ key }}</b>
+      {{ this.$props.sort[key] ?? '' }}
     </p>
     <p>
       <b> actions </b>
