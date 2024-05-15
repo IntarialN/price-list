@@ -3,12 +3,13 @@ import { Options, Vue } from 'vue-class-component';
 import { mapState } from 'vuex';
 import {UserState} from "@/types/user";
 import {apiService} from "@/services";
-import UserLocalStorage from "@/modules/user/services/user.localStorage";
+import {ItemErrorResponse, ModelItem} from "@/modules/items/models";
 
 @Options({
   props: {
     isOpened: Boolean,
-    close: () => Boolean
+    isEdit: Number,
+    id: Number,
   },
   computed: {
     ...mapState<UserState>({
@@ -16,27 +17,35 @@ import UserLocalStorage from "@/modules/user/services/user.localStorage";
     })
   },
   methods: {
-    async login() {
-      const isLoggined = await apiService('post', 'users/login', { username: this.username, password: this.password })
+    async toggle() {
+      const isSuccess: (ModelItem & ItemErrorResponse) = await apiService(this.isEdit !== null ? 'patch' : 'post', `items/${ this.isEdit !== null ? this.$props.id : '' }`, { name: this.name, price: this.price })
 
-      if (!isLoggined.accessToken) alert(isLoggined.message);
+      if (!isSuccess) return alert('Прозошла ошибка на сервере');
+      if (isSuccess.message) return alert(isSuccess.message);
       else {
-        this.$store.dispatch('login', this.username);
-        this.$emit('close');
+        if (this.isEdit !== null) {
+          this.$store.dispatch('edit', {
+            id: this.$props.id,
+            name: this.name,
+            price: this.price
+          });
+        } else {
+          this.$store.dispatch('create', { id: isSuccess.id, name: isSuccess.name, price: isSuccess.price })
+        }
 
-        UserLocalStorage.setAuthLocalStorage(isLoggined.accessToken);
+        this.$emit('close');
       }
     }
   }
 })
 
-export default class Login extends Vue {
-  public loginKeys: ('username' | 'password')[] = ['username', 'password'];
+export default class Create extends Vue {
+  public loginKeys: ('name' | 'price')[] = ['name', 'price'];
 
-  public username: string = '';
-  public password: string = '';
+  public name: string = '';
+  public price: string = '';
 
-  changeForm(event: Event, key: 'username' | 'password') {
+  changeForm(event: Event, key: 'name' | 'price') {
     this[key] = (event.target as HTMLInputElement).value;
   }
 }
@@ -50,13 +59,13 @@ export default class Login extends Vue {
       <div class="pl-page-home--modal-login-box--input">
         <v-text-field
             :key="key"
+            :label="key"
             v-for="key in loginKeys"
             variant="solo-filled"
             @change="(event: Event) => changeForm(event, key)"
-            :label="key"
         />
-        <v-btn @click="this.login" color="primary">
-          Login
+        <v-btn @click="this.toggle" color="primary">
+          {{ this.$props.isEdit !== null ? 'Edit' : 'Create' }}
         </v-btn>
       </div>
     </div>

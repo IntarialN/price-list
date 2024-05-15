@@ -1,14 +1,15 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import { mapState } from 'vuex';
-import {UserState} from "@/types/user";
+import TableHeaders from './components/Table.Headers.vue';
+import TableItems from './components/Table.Items.vue';
+import {ModelItem} from "@/modules/items/models";
 
 @Options({
-  components: {},
+  components: {TableHeaders, TableItems},
   computed: {
-    ...mapState<UserState>({
-      username: (state: UserState) => state.user.username,
-      isAuthenticated: (state: UserState) => state.user.isAuthenticated
+    ...mapState<ModelItem>({
+      items: (state: { items: { items: ModelItem } }) => state.items.items,
     })
   }
 })
@@ -21,6 +22,14 @@ export default class Header extends Vue {
 
   changeSearch(event: Event) {
     this.searchValue = (event.target as HTMLInputElement).value;
+  }
+
+  remove(id: number) {
+    this.$emit('edit', id);
+  }
+
+  edit(id: number) {
+    this.$emit('edit', id);
   }
 }
 </script>
@@ -42,6 +51,24 @@ export default class Header extends Vue {
           Search
         </v-btn>
       </div>
+      <div class="pl-page-home--table-container_list">
+        <TableHeaders
+            :items="this.items"
+        />
+        <TableItems
+          :items="this.items"
+          @remove="remove"
+          @edit="edit"
+        />
+        <div
+            v-if="!this.items.length"
+            class="pl-page-home--table-container_list-headers"
+            data-empty="true">
+          <p>
+            Items is empty
+          </p>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -58,6 +85,9 @@ export default class Header extends Vue {
   &-container {
     width: 50%;
     height: 40%;
+    display: flex;
+    flex-direction: column;
+    gap: 3vh;
 
     &_search {
       position: relative;
@@ -75,6 +105,12 @@ export default class Header extends Vue {
         bottom: 0;
         margin: auto;
       }
+    }
+
+    &_list {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
     }
   }
 }

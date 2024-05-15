@@ -3,6 +3,8 @@ import { Options, Vue } from 'vue-class-component';
 import { mapState } from 'vuex';
 import {UserState} from "@/types/user";
 import Login from "@/modules/user/components/Login.vue";
+import UserLocalStorage from "@/modules/user/services/user.localStorage";
+import {Action} from "vuex-class";
 
 @Options({
   components: {Login},
@@ -17,8 +19,15 @@ import Login from "@/modules/user/components/Login.vue";
 export default class Header extends Vue {
   public isOpenedLogin: boolean = false;
 
+  @Action quit!: () => void;
+
   public toggleLoginMenu(open: boolean) {
     this.isOpenedLogin = open;
+  }
+
+  public exit() {
+    UserLocalStorage.clearAuthLocalStorage();
+    this.quit();
   }
 }
 </script>
@@ -34,7 +43,13 @@ export default class Header extends Vue {
     <v-btn
         v-if="this.isAuthenticated"
         color="primary">
-      {{ this.username }}
+      Авторизован
+    </v-btn>
+    <v-btn
+        v-if="this.isAuthenticated"
+        @click="exit"
+        color="primary">
+      Выйти
     </v-btn>
   </div>
   <Login
@@ -46,10 +61,11 @@ export default class Header extends Vue {
 <style lang="scss">
 .pl-page-home--header {
   width: 100%;
-  padding: 50px 30px;
+  padding: 15px 30px;
+  gap: 20px;
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  background: black;
+  background: #013470;
 }
 </style>

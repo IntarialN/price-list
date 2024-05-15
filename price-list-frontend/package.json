@@ -10,13 +10,16 @@
   "dependencies": {
     "@chakra-ui/vue": "^0.13.1",
     "@emotion/css": "^11.11.2",
+    "@mdi/js": "^7.4.47",
     "axios": "^1.6.8",
     "core-js": "^3.8.3",
     "emotion": "^10.0.27",
+    "mdi-vue": "^3.0.13",
     "vue": "^3.2.13",
     "vue-class-component": "^8.0.0-0",
     "vuetify": "^3.6.6",
-    "vuex": "^4.0.0"
+    "vuex": "^4.0.0",
+    "vuex-class": "^0.3.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",

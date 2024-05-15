@@ -1,27 +1,42 @@
 import { Commit } from 'vuex';
-import {User, UserState} from "@/types/user";
+import {ItemState} from "@/types/item";
+import {ModelItem} from "@/modules/items/models";
 
 export default {
     state: {
-        username: 'dsadsa',
-        isAuthenticated: false,
+        items: [{ id: 0, name: 'Tovar2', price: 100 }],
+        pages: 10,
+        itemsPerPage: 5
     },
     mutations: {
-        setUser(state: User, username: string | null) {
-            state.username = username;
-            state.isAuthenticated = true;
+        loadItems(state: ItemState, data: { items: ModelItem[], pages?: number }) {
+            state.items = data.items;
+            state.pages = data.pages ?? 0;
+        },
+        newItem(state: ItemState, item: ModelItem) {
+            state.items = [...state.items, item];
+        },
+        editItem(state: ItemState, item: ModelItem) {
+            state.items = state.items
+                .map(itemState =>
+                    itemState.id === item.id ?
+                        { ...item } :
+                        itemState
+                );
         },
     },
     actions: {
-        login({ commit }: { commit: Commit }, username: string | null) {
-            commit('setUser', username);
+        load({ commit }: { commit: Commit }, items: ModelItem[], pages?: number) {
+            commit('loadItems', { items, pages });
         },
-        logout({ commit }: { commit: Commit }) {
-            commit('setUser', null);
+        create({ commit }: { commit: Commit }, item: ModelItem) {
+            commit('newItem', item);
         },
+        edit({ commit }: { commit: Commit }, item: ModelItem) {
+            commit('editItem', item);
+        }
     },
     getters: {
-        user: (state: User) => state.username,
-        isAuthenticated: (state: User) => state.isAuthenticated,
+        items: (state: ItemState) => state.items
     },
 };

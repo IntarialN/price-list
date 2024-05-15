@@ -8,7 +8,7 @@ class UserLocalStorage {
     public checkAuthLocalStorage = () => {
         const data = localStorage.getItem(this.localStorageName);
         if (data) {
-            return JSON.parse(data);
+            return data;
         }
         return false;
     };
