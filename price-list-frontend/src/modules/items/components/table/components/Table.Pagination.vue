@@ -7,7 +7,7 @@ import {ItemSortType} from "@/types/item";
 
 @Options({
   props: {
-    show: Boolean,
+    show: Number,
     pages: Number,
     sort: {} as ItemSortType,
     searchValue: String

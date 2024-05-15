@@ -16,7 +16,7 @@ import {ItemErrorResponse, ModelItem} from "@/modules/items/models";
     isOpened: Boolean,
     isEdit: Number,
     id: Number,
-    items: [] as ModelItem[]
+    items: [{}] as ModelItem[]
   },
   methods: {
     async toggle() {
